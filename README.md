@@ -32,7 +32,7 @@ tar -xf budgetml-models.tar          # populates models/saved/
 # 3. Get a database — pick ONE:
 #    a) Seed a realistic 6-month demo user (recommended):
 python scripts/seed_test_user.py
-#    b) ...or download the prebuilt budgetml.db from the release into data/
+#    b) ...or download the empty budgetml.db from the release into data/ (schema only)
 
 # 4. Run the API + dashboard
 uvicorn api.app:app --port 8000
@@ -51,7 +51,7 @@ them from the [Releases page](../../releases):
 | Asset | Contents |
 |-------|----------|
 | `budgetml-models.tar` | All trained models → extract into `models/saved/` |
-| `budgetml.db`         | Prebuilt demo database (optional) → place in `data/` |
+| `budgetml.db`         | Empty starter database (schema only, optional) → place in `data/` |
 
 The release excludes the optional `local_llm/` base model used by
 `models/intelligence/local_llm.py`; download that separately if you want the
