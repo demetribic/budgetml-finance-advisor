@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "budgetml"
+version = "1.0.0"
+description = "ML-powered personal budgeting system"
+requires-python = ">=3.10"
+dependencies = [
+    "torch~=2.0",
+    "xgboost~=2.0",
+    "lightgbm~=4.1",
+    "scikit-learn~=1.3",
+    "fastapi~=0.104",
+    "uvicorn[standard]~=0.24",
+    "pandas~=2.0",
+    "numpy~=1.24",
+    "matplotlib~=3.7",
+    "seaborn~=0.12",
+    "huggingface-hub~=0.19",
+    "tqdm~=4.66",
+    "pydantic~=2.4",
+    "scipy~=1.11",
+    "joblib~=1.3",
+    "python-dotenv~=1.0",
+    "requests~=2.31",
+    "beautifulsoup4~=4.12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest~=7.4",
+    "black~=23.0",
+    "ruff~=0.1",
+]
+
+[tool.setuptools.packages.find]
+include = ["api*", "config*", "data*", "models*", "rules*", "training*", "evaluation*"]

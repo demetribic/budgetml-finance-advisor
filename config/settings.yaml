@@ -1,0 +1,91 @@
+# config/settings.yaml — single source of truth for all project configuration.
+#
+# All training scripts, the evaluator, and the API load this file via
+# config.Settings.load().  Change a value here and every script picks it up —
+# no more hunting through argparse defaults scattered across train_*.py files.
+
+# ── Canonical spending categories ─────────────────────────────────────────────
+# Must stay in sync with data/preprocessor.py CATEGORIES.
+# The list here is informational (for humans reading the config); the actual
+# Python constant lives in data/preprocessor.py and is the authoritative source.
+categories:
+  - dining
+  - groceries
+  - subscriptions
+  - transportation
+  - utilities
+  - entertainment
+  - shopping
+  - healthcare
+  - other
+
+# ── Per-dataset label capabilities ────────────────────────────────────────────
+# Documents which labels each dataset provides out-of-the-box.
+# DataPipeline reads this to decide whether synthetic augmentation is needed.
+datasets:
+  personaledger:
+    has_anomaly_labels: true      # identity_theft_* configs have is_fraud/label
+    has_bulk_buy_labels: false    # no bulk-buy column; needs synthetic augmentation
+    default_hf_config: identity_theft_3months
+    default_split: test
+    default_max_rows: 500000
+  moneyvis:
+    has_anomaly_labels: false
+    has_bulk_buy_labels: false
+  synthetic:
+    has_anomaly_labels: true
+    has_bulk_buy_labels: true
+
+# ── Automatic synthetic augmentation ──────────────────────────────────────────
+# When the loaded dataset has no positive labels for a task, DataPipeline
+# generates this many synthetic users and appends them before building windows.
+# Set to 0 to disable augmentation for a task.
+synthetic_augmentation:
+  bulk_buy_num_users: 200   # PersonaLedger always needs this
+  anomaly_num_users: 0      # PersonaLedger identity_theft config already has labels
+
+# ── Preprocessor ──────────────────────────────────────────────────────────────
+preprocessor:
+  seq_len: 60          # rolling window length in days
+  forecast_horizon: 30 # days ahead to forecast spending
+  max_merchants: 512   # merchant vocabulary size (rare merchants → <UNK>)
+
+# ── Model architecture ────────────────────────────────────────────────────────
+models:
+  forecast:
+    d_model: 256
+    nhead: 4
+    num_layers: 4
+    lambda_cls: 0.0   # unused for forecast; kept for uniform schema
+
+  anomaly:
+    d_model: 256
+    nhead: 4
+    num_layers: 4
+    lambda_cls: 0.5   # weight of classification loss vs reconstruction loss
+
+  bulk_buy:
+    d_model: 256
+    nhead: 4
+    num_layers: 4
+    lambda_cls: 0.0   # unused; loss is defined inside the model
+
+# ── Training hyperparameters ──────────────────────────────────────────────────
+training:
+  # Shared defaults
+  batch_size: 256
+  lr: 0.001
+  weight_decay: 0.0001
+  patience: 5           # early-stopping patience (epochs without improvement)
+  grad_clip: 1.0        # max gradient norm
+  lr_eta_min_factor: 0.01  # CosineAnnealingLR eta_min = lr * this
+
+  # Per-task epoch budgets (anomaly uses the shared `epochs` value)
+  epochs: 100           # anomaly detector
+  forecast_epochs: 30
+  bulk_buy_epochs: 30
+
+# ── Filesystem paths ──────────────────────────────────────────────────────────
+# Relative paths are resolved from the project root (parent of config/).
+paths:
+  save_dir: models/saved

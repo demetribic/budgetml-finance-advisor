@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Model artifacts (download from Releases instead)
+models/saved/
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.onnx
+
+# Serialized objects
+*.pkl
+*.pickle
+*.joblib
+
+# Databases (seed locally via scripts/seed_test_user.py)
+*.db
+*.db-wal
+*.db-shm
+
+# Data (large / potentially sensitive)
+data/raw/
+data/processed/
+data/cache/
+*.csv
+*.parquet
+
+# Training / run outputs
+runs/
+logs/
+checkpoints/
+*.log
+*.out
+*.err
+slurm-*.out
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
